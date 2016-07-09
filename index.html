@@ -1,0 +1,712 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>City of Angels Role Play - San Andreas Maps</title>
+    <!-- Disallow users to scale this page -->
+	<meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <style type="text/css">
+		@font-face {
+			font-family: 'entypo';
+			src: url('fonts/entypo.eot');
+			src: url('fonts/entypo.eot?#iefix') 	format('embedded-opentype'),
+				 url('fonts/entypo.woff') 		format('woff'),
+				 url('fonts/entypo.ttf') 		format('truetype'),
+				 url('fonts/entypo.svg#entypo') 	format('svg');
+			font-weight: normal;
+			font-style: normal;
+
+		}
+        html, body, #map-canvas {
+            height: 100%;
+            margin: 0;
+        }
+		.windowText {
+			color: #737373;
+			font-family: Calibri;
+			font-size: 15px;
+		}
+		#gear {
+			background-color: #fff;
+			box-shadow: 0 0 3px rgba(0, 0, 0, 0.53);
+			border-radius: 6px;
+			color: #7F7F7F;
+			font-family: Calibri;
+			font-size: 11px;
+			padding: 10px;
+			margin-left: 5px;
+		}
+		#gear h1,h2,h3 {
+			font-weight: 200;
+			line-height: 0;
+			padding: 0;
+		}
+		#gear ul {
+			margin: 0;
+			padding: 0;
+			line-height: 0;
+		}
+		#gear li {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			display: inline-flex;
+		}
+		#gear h3 {
+			margin-left: 18px;
+		}
+		#legend {
+			background-color: #fff;
+			box-shadow: 0 0 3px rgba(0, 0, 0, 0.53);
+			border-radius: 6px;
+			color: #7F7F7F;
+			font-family: Calibri;
+			font-size: 11px;
+			padding: 10px;
+			margin-right: 5px;
+		}
+		#legend h1,h2,h3 {
+			display: inline-flex;
+			font-weight: 200;
+			line-height: 0;
+			padding: 0;
+		}
+		#legend ul {
+			margin: 0;
+			padding: 0;
+			line-height: 0;
+		}
+		#legend li {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			display: inline-flex;
+		}
+		#legend h3 {
+			margin-left: 18px;
+		}
+		.locations p {
+			line-height: 0.49;
+		}
+		#filter {
+			height: 20px;
+			width: 115px;
+			padding: 0;
+			margin: 0;
+			margin-top: 3px;
+			margin-left: 3px;
+		}
+		.coaLogo {
+			cursor: pointer;
+		}
+		#mapCredits {
+			background-color: #fff;
+			box-shadow: 0 0 3px rgba(0, 0, 0, 0.53);
+			padding: 10px;
+			width: 200px;
+			margin-bottom: 15px;
+			height: 35px;
+		}
+		.credits {
+			display: none;
+			color: #303030;
+			text-align: center;
+			font-family: Calibri;
+			font-size: 15px;
+			padding: 0;
+			margin: 0;
+			text-transform: uppercase;
+			font-weight: 300;
+			line-height: 2.2;
+		}
+		.locations {
+			margin-left: 5px;
+		}
+		.entypo {
+			float:left;
+			font-family: "entypo";
+			font-size: 40px;
+			line-height: 0;
+			padding: 0;
+			margin: 0;
+		}
+		#legend-button {
+			background-color: #fff;
+			box-shadow: 0 0 1px rgba(0, 0, 0, 0.53);
+			border: 1px solid #7F7F7F;
+			border-radius: 6px;
+			color: #7F7F7F;
+			width: 85px;
+			height: 25px;
+			text-align: center;
+			margin: 0 auto;
+			cursor: pointer;
+		}
+		#legend-button p {
+			font-family: Calibri;
+			font-size: 15px;
+			line-height: 1.6;
+			padding: 0;
+			margin: 0;
+			text-transform: uppercase;
+		}
+		#legend-button:hover {
+			background-color: #7F7F7F;
+			color: #fff;
+			-moz-transition: all 1s ease;
+			-o-transition: all 1s ease;
+			-webkit-transition: all 1s ease;
+			transition: all 1s ease;
+		}
+    </style>
+</head>
+<body>
+	<!-- The container the map is rendered in -->
+	<div id="mapCredits" style="display:none">
+		<h2 class="credits" style="line-height: 1;">Oni koji su pridonjeli projektu!</h2>
+		<h2 class="credits">Kodiranje B-Matt</h2>
+		<h2 class="credits">Interijeri Negativac & BTT</h2>
+		<h2 class="credits">Ikone by donRisbo</h2>
+		<h2 class="credits">Google Maps API v3</h2>
+		<h2 class="credits">City of Angels Role Play</h2>
+	</div>
+	<div id="map-canvas"></div>
+	<div id="gear">
+		<center><h2><p class="entypo">&#9881;</p>POSTAVKE</h2></center>
+		<br>
+		<ul>
+			<li>
+				<input type="checkbox" name="locations" value="locations" onchange="showMarkers( this.value );" checked><p>Prikaži lokacije</p>
+			</li><br>
+			<li class="locations">
+				<h3>LOKACIJE:</h3>
+				<input type="checkbox" name="benze" value="benze" onchange="showMarkers( this.value );" style="margin-top:7px" checked><p>Benzinske</p>
+				<input type="checkbox" name="buildings" value="buildings" onchange="showMarkers( this.value );" style="margin-top:7px" checked><p>Važne zgrade</p>
+			</li><br>
+		
+			<li>
+				<input type="checkbox" name="houses" value="houses" onchange="showMarkers( this.value );"><p>Prikaži kuće</p>
+			</li><br>
+			<li class="house" style="display:none">
+				<h3>KUCE:</h3>
+				<select id="filter" onchange="filterHouseFunction( this.value );">
+					<option value="all">Sve kuće</option>
+					<option value="rent">Kuće na rent</option>
+					<option value="buy">Kuće za kupovinu</option>
+					<option value="bought">Prodane kuće</option>
+				</select>
+			</li><br>
+			<li>
+				<input type="checkbox" name="bizzes" value="bizzes" onchange="showMarkers( this.value );"><p>Prikaži biznise</p>
+			</li><br>
+			<li class="bizz" style="display:none">
+				<h3>BIZNISI:</h3>
+				<select id="filter" onchange="filterBiznisFunction( this.value );">
+					<option value="all">Svi biznisi</option>
+					<option value="buy">Biznisi na prodaju</option>
+					<option value="bought">Kupljeni biznisi</option>
+					<option value="state">U vlasništvu grada</option>
+				</select>
+			</li>
+		</ul>
+	</div>
+	<div id="legend">
+		<center><h2><p class="entypo">&#59148;</p>LEGENDA</h2></center>
+		<ul>
+			<li class="legend" style="display:block">
+				<ul>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/biznis_icon_state.png" alt="Biznis" height="16" width="16"><p style="margin-left:5px;">Biznis u posjedu grada (Mayora)</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/biznis_icon_bought.png" alt="Biznis" height="16" width="16"><p style="margin-left:5px;">Prodani biznis</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/biznis_icon_buy.png" alt="Biznis" height="16" width="16"><p style="margin-left:5px;">Biznis na prodaji</p></li><br>
+
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/house_icon_rentabil.png" alt="Kuće" height="16" width="16"><p style="margin-left:5px;">Kuća slobodna za iznajmljivanje</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/house_icon_bought.png" alt="Kuće" height="16" width="16"><p style="margin-left:5px;">Kupljena kuća</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/house_icon_buy.png" alt="Kuće" height="16" width="16"><p style="margin-left:5px;">Kuća na prodaji</p></li><br>
+
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/pump_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Benzinske pumpe</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/police_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Los Santos Police Department</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/fd_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Los Santos Fire Department(Bolnica)</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/verona_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Verona Mall</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/boat_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Boat Ownership</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/aero_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Aircraft Ownership</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/pizza_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Pizza Stack</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/gym_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Ganton Gym</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/casino_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Casino</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/burg_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Burger</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/bank_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Banka</p></li><br>
+					<li style="margin-bottom:6px;margin-left:10px;"><img src="icons/locations/wangs_icon.png" alt="Lokacije" height="16" width="16"><p style="margin-left:5px;">Car Ownership (Wangs Cars)</p></li><br>
+				</ul>
+			</li>
+		</ul>
+		<br>
+		<div id="legend-button">
+			<p>SAKRIJ</p>
+		</div>
+	</div>
+
+	<!-- Load all javascript -->
+	<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+	<script src="js/Maps.js"></script>
+	<script>	
+		// Global vars
+		// *** KUĆE ***
+		var houseMarkers 	= [];
+		var rentHouseMarker = [];
+		var buyHouseMarker	= [];
+		var soldHouseMarker	= [];
+		var shownHouses 	= 0;
+		
+		// *** BIZNISI ***
+		var biznisMarkers 		= [];
+		var buyBiznisMarker 	= [];
+		var boughtBiznisMarker 	= [];
+		var stateBiznisMarker	= [];
+		var shownBizzes 		= 0;
+		
+		// *** LOKACIJE ***
+		var shownLocations 		= 1;
+		var shownPumps 			= 1;
+		var shownLocation		= 1;
+		var locationMarkers		= [];
+		var pumpLocationMarker	= [];
+		var mainLocationMarker	= [];
+
+		// Define the mapTypes we'll be using
+		var mapType = new MapsType(1, 3, function (zoom, x, y) {
+			return x == -1 && y == -1 ? "tiles/map.outer.png" : "tiles/map." + zoom + "." + x + "." + y + ".png";
+		});
+		// Initialize the map
+		var sm = new Maps('map-canvas', {'Map': mapType}, 1);
+		
+		// Styling map
+		sm.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('gear'));
+		sm.map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(document.getElementById('legend'));
+		
+		// Markers
+		function showMarkers(value) {
+			if( value == "houses" ) {
+				if( !shownHouses ) {
+					$('.house').fadeIn("slow");
+					shownHouses = 1;
+					
+					downloadUrl("getHouseData.php", function(data) {
+						var xml = data.responseXML;
+						var houses = xml.documentElement.getElementsByTagName("house");
+						var homeInfoWindow = null;
+						var text = null;
+						
+						homeInfoWindow = new google.maps.InfoWindow({
+							content: 'a'
+						});
+						for (var i = 0; i < houses.length; i++) {
+							if( houses[i].getAttribute("owned") == 1 && houses[i].getAttribute("rent") > 0 ) {
+								var homeMarker = new google.maps.Marker({
+									position: Maps.getLatLngFromPos(parseFloat(houses[i].getAttribute("lat")), parseFloat(houses[i].getAttribute("lng"))),
+									map: sm.map,
+									icon: 'icons/house_icon_rentabil.png'
+								});
+								rentHouseMarker.push(homeMarker);
+							}
+							else if( houses[i].getAttribute("owned") == 1 && houses[i].getAttribute("rent") == 0 ) {
+								var homeMarker = new google.maps.Marker({
+									position: Maps.getLatLngFromPos(parseFloat(houses[i].getAttribute("lat")), parseFloat(houses[i].getAttribute("lng"))),
+									map: sm.map,
+									icon: 'icons/house_icon_bought.png'
+								});
+								soldHouseMarker.push(homeMarker);
+							}
+							else if( houses[i].getAttribute("owned") == 0 ) {
+								var homeMarker = new google.maps.Marker({
+									position: Maps.getLatLngFromPos(parseFloat(houses[i].getAttribute("lat")), parseFloat(houses[i].getAttribute("lng"))),
+									map: sm.map,
+									icon: 'icons/house_icon_buy.png'
+								});
+								buyHouseMarker.push(homeMarker);
+							}
+							var image = getInteriorImage(houses[i].getAttribute("exitX"), houses[i].getAttribute("exitY"), houses[i].getAttribute("interior"));
+							var txt = '<h3>' + 'Kuca #' + houses[i].getAttribute("name") + '</h3><p class="windowText">Adresa: ' + houses[i].getAttribute("address") + '<br>Vlasnik: ' + houses[i].getAttribute("owner") + '<br>Vrijednost: ' + houses[i].getAttribute("value") + '$<br>Cijena renta: ' + houses[i].getAttribute("rent") + '</p><br><center><img src="interiors/' + image + '.png" height="128" width="128" /></center>';
+							bindInfoWindow(homeMarker, sm.map, homeInfoWindow, txt);
+							houseMarkers.push(homeMarker);
+						}
+					});					
+				} else {
+					$('.house').fadeOut("slow");
+					shownHouses = 0;
+					for(var i = 0; i < houseMarkers.length; i++) {
+						houseMarkers[i].setMap(null);
+					}
+				}
+			}
+			else if( value == "bizzes" ) {
+				if( !shownBizzes ) {
+					$('.bizz').fadeIn("slow");
+					shownBizzes = 1;
+					
+					downloadUrl("getBiznisData.php", function(data) {
+						var xml = data.responseXML;
+						var bizzes = xml.documentElement.getElementsByTagName("biznis");
+						var biznisInfoWindow = null;
+						var text = null;
+						
+						biznisInfoWindow = new google.maps.InfoWindow({
+							content: 'a'
+						});
+						
+						for (var i = 0; i < bizzes.length; i++) {
+							if( bizzes[i].getAttribute("type") == 14 ) {
+								var bizMarker = new google.maps.Marker({
+									position: Maps.getLatLngFromPos(parseFloat(bizzes[i].getAttribute("lat")), parseFloat(bizzes[i].getAttribute("lng"))),
+									map: sm.map,
+									icon: 'icons/biznis_icon_state.png'
+								});
+								stateBiznisMarker.push(bizMarker);
+							}
+							else if( bizzes[i].getAttribute("owned") == 1 ) {
+								var bizMarker = new google.maps.Marker({
+									position: Maps.getLatLngFromPos(parseFloat(bizzes[i].getAttribute("lat")), parseFloat(bizzes[i].getAttribute("lng"))),
+									map: sm.map,
+									icon: 'icons/biznis_icon_bought.png'
+								});
+								boughtBiznisMarker.push(bizMarker);
+							}
+							else if( bizzes[i].getAttribute("owned") == 0 ) {
+								var bizMarker = new google.maps.Marker({
+									position: Maps.getLatLngFromPos(parseFloat(bizzes[i].getAttribute("lat")), parseFloat(bizzes[i].getAttribute("lng"))),
+									map: sm.map,
+									icon: 'icons/biznis_icon_buy.png'
+								});
+								buyBiznisMarker.push(bizMarker);
+							}
+							var owner = ( bizzes[i].getAttribute("type") == 14 ) ? ("Grad") : bizzes[i].getAttribute("owner");
+							
+							var txt = '<h3>' + 'Biznis #' + bizzes[i].getAttribute("name") + '</h3><p class="windowText">Naziv: ' + bizzes[i].getAttribute("message") + '<br>Vlasnik: ' + owner + '<br>Cijena: ' + bizzes[i].getAttribute("value") + '<br>Level: ' + bizzes[i].getAttribute("level") + '<br>Cijena ulaza: ' + bizzes[i].getAttribute("entercost") + '</p><br>';
+							bindInfoWindow(bizMarker, sm.map, biznisInfoWindow, txt);
+							biznisMarkers.push(bizMarker);
+						}
+					});		
+				} else {
+					$('.bizz').fadeOut("slow");
+					shownBizzes = 0;
+					for(var i = 0; i < biznisMarkers.length; i++) {
+						biznisMarkers[i].setMap(null);
+					}
+				}
+			}
+			else if( value == "locations" ) {
+				if( !shownLocations ) {
+					$('.locations').fadeIn("slow");
+					shownLocations = 1;
+					
+					var locInfoWindow 	= null;
+					var locMarker 		= null;
+					
+					// Pumpe
+					var pumps = [[ 1004.0070,	-939.3102	],	
+								[ 1944.3260,	-1772.9254	],	
+								[ -90.5515,		-1169.4578	],	
+								[ -1609.7958,	-2718.2048	],	
+								[ -2029.4968,	156.4366	],	
+								[ -2408.7590,	976.0934	],	
+								[ -2243.9629,	-2560.6477	],	
+								[ -1676.6323,	414.0262	],	
+								[ 2202.2349,	2474.3494	],	
+								[ 614.9333,		1689.7418	],	
+								[ -1328.8250,	2677.2173	],	
+								[ 70.3882,		1218.6783	],	  
+								[ 2113.7390,	920.1079	],		 
+								[ -1327.7218,	2678.8723	],		
+								[ 655.6758, 	-565.4126	]];
+					locInfoWindow = new google.maps.InfoWindow({
+						content: 'a'
+					});
+					for( var i=0; i < pumps.length; i++) {
+						locMarker = new google.maps.Marker({
+							position: Maps.getLatLngFromPos(parseFloat(pumps[i][0]), parseFloat(pumps[i][1])),
+							map: sm.map,
+							icon: 'icons/pump_icon.png'
+						});
+						pumpLocationMarker.push(locMarker);
+						txt = '<h3>Benzinska #' + (i+1) + '</h3><br><p class="windowText">Gorivo sipate s /fill ili u kanister /get fuel (i kod auta /fillcar)</p><br>';
+						bindInfoWindow(locMarker, sm.map, locInfoWindow, txt);
+						locationMarkers.push(locMarker);
+					}
+					// Lokacije
+					var loc = [	
+						[1481.0137, -1772.4517, 'Vijećnica je ujedno i spawn na našem serveru.<br>Unutra možete pronaći poslove (/takejob), podići novce s knjižice (/payout) ili kupiti license (/buylicenses).', 'icons/locations/town_icon.png', 'photos/City-Hall.png'], // Vijećnica
+						[1555.0544, -1675.9198, 'Los Santos Police Department je jedna od mnogih organizacija na serveru.<br>U nju ulazite isključivo putem prijava na forumu.<br>Za više pogledajte naš forum www.cityofangels-roleplay.com', 'icons/locations/police_icon.png', 'photos/Police.png'], // LSPD
+						[1172.1400, -1323.5594, 'Los Santos Fire Department je jedna od mnogih organizacija na serveru.<br>U nju ulazite isključivo putem prijava na forumu.<br>Za više pogledajte naš forum www.cityofangels-roleplay.com', 'icons/locations/fd_icon.png', 'photos/Hospital.png'], // LSFD
+						[1129.1273, -1490.1561, 'Verona Mall je jedini trgovački centar u Los Santosu.<br>Ovdje možete pronaći objekte koje možete staviti na sebe ili ugodan roleplay s drugim igračima.', 'icons/locations/verona_icon.png', 'photos/Verona.png'], // Verona Mall
+						[110.1072,  -1818.6821, 'Los Santos Marina je mjesto gdje kupujete brodove (/car buy) i vežete ih tu.', 'icons/locations/boat_icon.png', 'photos/Airport.png'], 	// Boat
+						[1958.5725, -2270.2456, 'Los Santos Aeroport je mjesto gdje kupujete avione (/car buy) i parkirate u hangare.', 'icons/locations/aero_icon.png', 'photos/Airport.png'], 	// Aero
+						[2115.0952, -1806.4358, 'Pizza Stack je ključno mjesto u Los Santosu.<br>Uz Burger King i Cluckin Bell je jedan od popularniji restorana.', 'icons/locations/pizza_icon.png', 'photos/Pizza.png'], 	// Pizza
+						[2235.4922, -1716.8300, 'Ganton Gym je mjesto gdje možete trenirati ili se boriti u MMA turnirima!', 'icons/locations/gym_icon.png'], // Gym
+						[1324.0546, -1713.6678, 'Los Santos Casino je mjesto gdje možete kockati s drugim igračima i zaraditi novce!', 'icons/locations/casino_icon.png', 'photos/Casino.png'], // Casino
+						[1785.3777, -1722.4630, 'Auto škola je mjesto gdje polažete ispit za vozačku dozvolu!', 'icons/locations/school_icon.png', 'photos/Drivers.png'], // Auto škola
+						[1199.2405, -919.00470, 'Burger King je još jedno ključno mjesto u Los Santosu.<br>Uz Pizza Stack i Cluckin Bell je jedan od popularniji restorana.', 'icons/locations/burg_icon.png', 'photos/Burger.png'], // Burg
+						[1462.4659, -1010.8915, 'U banci stavljate ili dižete novce na račun (/bank) ili možete dignuti kredit(/credit)!', 'icons/locations/bank_icon.png', 'photos/Bank.png'], // Banka
+						[1725.4047, -1776.6549, 'Wangs Cars je mjesto gdje možete kupiti cestovno vozilo (/car buy) za prihvatljivu cijenu!', 'icons/locations/wangs_icon.png', 'photos/Wang.png'] // Wangs
+					];
+						
+					for( var i=0; i < loc.length; i++) {
+						locMarker = new google.maps.Marker({
+							position: Maps.getLatLngFromPos(parseFloat(loc[i][0]), parseFloat(loc[i][1])),
+							map: sm.map,
+							icon: loc[i][3]
+						});
+						mainLocationMarker.push(locMarker);
+						txt = '<h3>Lokacija #' + (i+1) + '</h3><br><br><center><img src="' + loc[i][4] + '" alt="Property of CoA!" width="401" height="175"></center><p class="windowText">' + loc[i][2] + '</p><br>';
+						bindInfoWindow(locMarker, sm.map, locInfoWindow, txt);
+						locationMarkers.push(locMarker);
+					}
+				} else {
+					$('.locations').fadeOut("slow");
+					shownLocations = 0;
+					for(var i = 0; i < locationMarkers.length; i++) {
+						locationMarkers[i].setMap(null);
+					}
+				}
+			}
+			else if( value == "benze" ) {
+				if( !shownPumps ) {
+					shownPumps = 1;
+					for(var i = 0; i < pumpLocationMarker.length; i++) {
+						pumpLocationMarker[i].setMap(sm.map);
+					}
+				} else {
+					shownPumps = 0;
+					for(var i = 0; i < pumpLocationMarker.length; i++) {
+						pumpLocationMarker[i].setMap(null);
+					}
+				}
+			}
+			else if( value == "buildings" ) {
+				if( !shownLocation ) {
+					shownLocation = 1;
+					for(var i = 0; i < mainLocationMarker.length; i++) {
+						mainLocationMarker[i].setMap(sm.map);
+					}
+				} else {
+					shownLocation = 0;
+					for(var i = 0; i < mainLocationMarker.length; i++) {
+						mainLocationMarker[i].setMap(null);
+					}
+				}
+			}
+		}
+		
+		// ***** LOKACIJE (ON LOAD) *****
+		var locInfoWindow 	= null;
+		var locMarker 		= null;
+		
+		// Pumpe
+		var pumps = [[ 1004.0070,	-939.3102	],	
+					[ 1944.3260,	-1772.9254	],	
+					[ -90.5515,		-1169.4578	],	
+					[ -1609.7958,	-2718.2048	],	
+					[ -2029.4968,	156.4366	],	
+					[ -2408.7590,	976.0934	],	
+					[ -2243.9629,	-2560.6477	],	
+					[ -1676.6323,	414.0262	],	
+					[ 2202.2349,	2474.3494	],	
+					[ 614.9333,		1689.7418	],	
+					[ -1328.8250,	2677.2173	],	
+					[ 70.3882,		1218.6783	],	  
+					[ 2113.7390,	920.1079	],		 
+					[ -1327.7218,	2678.8723	],		
+					[ 655.6758, 	-565.4126	]];
+					
+		locInfoWindow = new google.maps.InfoWindow({
+			content: 'a'
+		});
+		for( var i=0; i < pumps.length; i++) {
+			locMarker = new google.maps.Marker({
+				position: Maps.getLatLngFromPos(parseFloat(pumps[i][0]), parseFloat(pumps[i][1])),
+				map: sm.map,
+				icon: 'icons/pump_icon.png'
+			});
+			pumpLocationMarker.push(locMarker);
+			txt = '<h3>Benzinska #' + (i+1) + '</h3><br><p class="windowText">Gorivo sipate s /fill ili u kanister /get fuel (i kod auta /fillcar)</p><br>';
+			bindInfoWindow(locMarker, sm.map, locInfoWindow, txt);
+			locationMarkers.push(locMarker);
+		}
+		// Lokacije
+		var loc = [	
+					[1481.0137, -1772.4517, 'Vijećnica je ujedno i spawn na našem serveru.<br>Unutra možete pronaći poslove (/takejob), podići novce s knjižice (/payout) ili kupiti license (/buylicenses).', 'icons/locations/town_icon.png', 'photos/City-Hall.png'], // Vijećnica
+					[1555.0544, -1675.9198, 'Los Santos Police Department je jedna od mnogih organizacija na serveru.<br>U nju ulazite isključivo putem prijava na forumu.<br>Za više pogledajte naš forum www.cityofangels-roleplay.com', 'icons/locations/police_icon.png', 'photos/Police.png'], // LSPD
+					[1172.1400, -1323.5594, 'Los Santos Fire Department je jedna od mnogih organizacija na serveru.<br>U nju ulazite isključivo putem prijava na forumu.<br>Za više pogledajte naš forum www.cityofangels-roleplay.com', 'icons/locations/fd_icon.png', 'photos/Hospital.png'], // LSFD
+					[1129.1273, -1490.1561, 'Verona Mall je jedini trgovački centar u Los Santosu.<br>Ovdje možete pronaći objekte koje možete staviti na sebe ili ugodan roleplay s drugim igračima.', 'icons/locations/verona_icon.png', 'photos/Verona.png'], // Verona Mall
+					[110.1072,  -1818.6821, 'Los Santos Marina je mjesto gdje kupujete brodove (/car buy) i vežete ih tu.', 'icons/locations/boat_icon.png', 'photos/Airport.png'], 	// Boat
+					[1958.5725, -2270.2456, 'Los Santos Aeroport je mjesto gdje kupujete avione (/car buy) i parkirate u hangare.', 'icons/locations/aero_icon.png', 'photos/Airport.png'], 	// Aero
+					[2115.0952, -1806.4358, 'Pizza Stack je ključno mjesto u Los Santosu.<br>Uz Burger King i Cluckin Bell je jedan od popularniji restorana.', 'icons/locations/pizza_icon.png', 'photos/Pizza.png'], 	// Pizza
+					[2235.4922, -1716.8300, 'Ganton Gym je mjesto gdje možete trenirati ili se boriti u MMA turnirima!', 'icons/locations/gym_icon.png'], // Gym
+					[1324.0546, -1713.6678, 'Los Santos Casino je mjesto gdje možete kockati s drugim igračima i zaraditi novce!', 'icons/locations/casino_icon.png', 'photos/Casino.png'], // Casino
+					[1785.3777, -1722.4630, 'Auto škola je mjesto gdje polažete ispit za vozačku dozvolu!', 'icons/locations/school_icon.png', 'photos/Drivers.png'], // Auto škola
+					[1199.2405, -919.00470, 'Burger King je još jedno ključno mjesto u Los Santosu.<br>Uz Pizza Stack i Cluckin Bell je jedan od popularniji restorana.', 'icons/locations/burg_icon.png', 'photos/Burger.png'], // Burg
+					[1462.4659, -1010.8915, 'U banci stavljate ili dižete novce na račun (/bank) ili možete dignuti kredit(/credit)!', 'icons/locations/bank_icon.png', 'photos/Bank.png'], // Banka
+					[1725.4047, -1776.6549, 'Wangs Cars je mjesto gdje možete kupiti cestovno vozilo (/car buy) za prihvatljivu cijenu!', 'icons/locations/wangs_icon.png', 'photos/Wang.png'] // Wangs
+				];
+					
+		for( var i=0; i < loc.length; i++) {
+			locMarker = new google.maps.Marker({
+				position: Maps.getLatLngFromPos(parseFloat(loc[i][0]), parseFloat(loc[i][1])),
+				map: sm.map,
+				icon: loc[i][3]
+			});
+			mainLocationMarker.push(locMarker);
+			txt = '<h3>Lokacija #' + (i+1) + '</h3><br><br><center><img src="' + loc[i][4] + '" alt="Property of CoA!" width="401" height="175"></center><p class="windowText">' + loc[i][2] + '</p><br>';
+			bindInfoWindow(locMarker, sm.map, locInfoWindow, txt);
+			locationMarkers.push(locMarker);
+		}
+		
+		// ***** Credits *****
+		sm.map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('mapCredits'));		
+		(function() {
+			var credits = $(".credits");
+			var creditsIndex = -1;
+			
+			function showNextCredits() {
+				++creditsIndex;
+				credits.eq(creditsIndex % credits.length)
+					.fadeIn(1000)
+					.delay(2000)
+					.fadeOut(1000, showNextCredits);
+			}
+			
+			showNextCredits();
+			
+		})();	
+		
+		var img = document.createElement("IMG");
+		img.setAttribute("class",	"coaLogo");
+		img.setAttribute("src", 	"logo.png");
+		img.setAttribute("width", 	"64");
+		img.setAttribute("height", 	"64");
+		img.setAttribute("alt", 	"Made by CoA-RP");
+
+		sm.map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(img);
+		google.maps.event.addDomListener(img, 'click', function() {
+			$("#mapCredits").toggle("slow")
+		});
+		
+		// ***** Legenda *****
+		var legendShown		= 1;
+		function mainLegend() {
+			$("#legend-button").click(function() {
+				if( !legendShown ) {
+					$("#legend ul").toggle("slow");
+					$("#legend-button p").text("Sakrij");
+					legendShown = 1;
+				} else {
+					$("#legend ul").toggle("slow");
+					$("#legend-button p").text("Prikaži");
+					legendShown = 0;
+				}
+			});
+		}
+		$(document).ready(mainLegend);
+		
+		// ***** Rest *****
+		function getInteriorImage(exitX, exitY, interior) {
+			var photoId;
+			var intPos = [
+				[ 235.305000,225.757000,223.193000,225.631000,295.139000,328.107000,385.804000,375.972000,490.811000,446.826000,227.723000,260.983978,221.733000,23.988000,-262.602000,22.778000,140.227000,234.046000,-68.294000,-285.549000,-42.582000,83.345000,260.984000,244.412000,266.499000,291.282990,302.181000,322.197998,343.7173,2495.642000,1263.080000,2526.459961,2468.450000,2543.659912,744.543000,964.106995,2350.339844,2807.920000,318.701000,2324.330000,446.5014 ],
+				[ 1186.683000,1240.000000,1287.080000,1022.480000,1474.470000,1478.010000,1471.770000,1417.270000,1401.490000,1397.344000,1114.390000,1286.549927,1140.510000,1340.390000,1456.620000,1404.960000,1365.920000,1064.880000,1353.470000,1470.980000,1408.110000,1324.440000,1286.550000,305.033000,305.0700,310.031982,300.723000,302.497986,304.9440,-1692.239000,-785.309000,-1679.089966,-1698.480000,-1303.629883,1437.67000,-53.205498,-1181.649902,-1174.430000,1114.770000,-1149.140000,507.0295 ]
+			];		
+			for( var index = 0; index != intPos[0].length; index++ ) {
+				if( exitX == intPos[0][index] && exitY == intPos[1][index] ) {
+					photoId = (index <= 9) ? ('0' + index) : index;
+					break;
+				}
+			}
+			return photoId;
+		}
+		function bindInfoWindow(marker, map, infowindow, strDescription) {
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.setContent(strDescription);
+				infowindow.open(map, marker);
+			});
+		}
+		function downloadUrl(url, callback) {
+		  var request = window.ActiveXObject ?
+			  new ActiveXObject('Microsoft.XMLHTTP') :
+			  new XMLHttpRequest;
+
+		  request.onreadystatechange = function() {
+			if (request.readyState == 4) {
+			  request.onreadystatechange = doNothing;
+			  callback(request, request.status);
+			}
+		  };
+
+		  request.open('GET', url, true);
+		  request.send(null);
+		}
+
+		function doNothing() {}
+		
+		function filterBiznisFunction(value) {
+			if( value == "all" ) {
+				for(var i = 0; i < biznisMarkers.length; i++) {
+					biznisMarkers[i].setMap(sm.map);
+				}
+			}
+			else if( value == "buy" ) {
+				for(var i = 0; i < biznisMarkers.length; i++) {
+					biznisMarkers[i].setMap(null);
+				}
+				for(var i = 0; i < buyBiznisMarker.length; i++) {
+					buyBiznisMarker[i].setMap(sm.map);
+				}
+			}
+			else if( value == "bought" ) {
+				for(var i = 0; i < biznisMarkers.length; i++) {
+					biznisMarkers[i].setMap(null);
+				}
+				for(var i = 0; i < boughtBiznisMarker.length; i++) {
+					boughtBiznisMarker[i].setMap(sm.map);
+				}
+			}
+			else if( value == "state" ) {
+				for(var i = 0; i < biznisMarkers.length; i++) {
+					biznisMarkers[i].setMap(null);
+				}
+				for(var i = 0; i < stateBiznisMarker.length; i++) {
+					stateBiznisMarker[i].setMap(sm.map);
+				}
+			}
+		}
+		
+		function filterHouseFunction(value) {
+			if( value == "rent" ) {
+				for(var i = 0; i < houseMarkers.length; i++) {
+					houseMarkers[i].setMap(null);
+				}
+				for(var i = 0; i < rentHouseMarker.length; i++) {
+					rentHouseMarker[i].setMap(sm.map);
+				}
+			}
+			else if( value == "buy" ) {
+				for(var i = 0; i < houseMarkers.length; i++) {
+					houseMarkers[i].setMap(null);
+				}
+				for(var i = 0; i < buyHouseMarker.length; i++) {
+					buyHouseMarker[i].setMap(sm.map);
+				}
+			}
+			else if( value == "bought" ) {
+				for(var i = 0; i < houseMarkers.length; i++) {
+					houseMarkers[i].setMap(null);
+				}
+				for(var i = 0; i < buyHouseMarker.length; i++) {
+					soldHouseMarker[i].setMap(sm.map);
+				}
+			}
+			else if( value == "all" ) {
+				for(var i = 0; i < houseMarkers.length; i++) {
+					houseMarkers[i].setMap(sm.map);
+				}
+			}
+		}
+	</script>
+</body>
