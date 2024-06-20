@@ -5,11 +5,11 @@
 	$parnode 		= $doc->appendChild($node);
 
 	// Opens a connection to a MySQL server
-	$link 			= mysqli_connect('127.0.0.1', 'server', 'pass');
+	$link 			= mysqli_connect('iota-db.optiklink.com', 'u172759_RgGfESEsRE', '0fLW@N7V^NmRNZLU32VvaI28');
 	if( !$link ) {
 		die("Error " . mysqli_error($link));
 	}
-	$db_selected 	= mysqli_select_db($link, "server");
+	$db_selected 	= mysqli_select_db($link, "s172759_Dex");
 
 	// Select all the rows in the markers table
 	$query = "SELECT * FROM houses WHERE 1";
